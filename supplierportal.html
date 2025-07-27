@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VendorFresh - Supplier Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;700&family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #17a1fa;
+      --primary-hover: #149de8;
+      --button-fg: #fff;
+      --bg-main: #f4f8fb;
+      --bg-alt: #ffffff;
+      --bg-subtle: #eef5fc;
+      --border-color: #e0e8f0;
+      --text-main: #23282c;
+      --text-mid: #7a7d8a;
+      --card-radius: 2rem;
+      --btn-radius: 1.5rem;
+      --success-color: #10b981;
+      --error-color: #ef4444;
+    }
+
+    body.dark {
+      --primary-color: #cccccc;
+      --primary-hover: #dfdfdf;
+      --button-fg: #1c1f2e;
+      --bg-main: #191d30;
+      --bg-alt: #252942;
+      --bg-subtle: #2a304d;
+      --border-color: #3c4462;
+      --text-main: #f0f0f0;
+      --text-mid: #a9a9a9;
+    }
+
+    html, body {
+      font-family: 'SF Pro Display', 'Poppins', system-ui, Arial, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+      margin: 0;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.2s;
+    }
+
+    .header {
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1.5rem 2rem;
+      box-shadow: 0 2px 20px rgba(23, 161, 250, 0.08);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--text-mid);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .dashboard-header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0;
+      background: linear-gradient(135deg, var(--primary-color), #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .dashboard-header p {
+      color: var(--text-mid);
+      font-size: 1.1rem;
+      margin: 0.5rem 0 0 0;
+    }
+
+    .form-card {
+      background: var(--bg-alt);
+      border-radius: var(--card-radius);
+      padding: 2.5rem;
+      box-shadow: 0 8px 32px rgba(23, 161, 250, 0.08);
+      border: 1px solid var(--border-color);
+      margin-bottom: 2rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+
+    input, textarea, select {
+      padding: 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: var(--btn-radius);
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-size: 1rem;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(23, 161, 250, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, var(--primary-color), #10b981);
+      color: white;
+      border: none;
+      padding: 1.2rem 2rem;
+      border-radius: var(--btn-radius);
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(23, 161, 250, 0.25);
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: var(--btn-radius);
+      margin-bottom: 1rem;
+      font-weight: 500;
+      display: none;
+    }
+
+    .alert.success {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success-color);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .alert.error {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--error-color);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .products-list {
+      background: var(--bg-alt);
+      border-radius: var(--card-radius);
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(23, 161, 250, 0.08);
+      border: 1px solid var(--border-color);
+    }
+
+    .products-list h3 {
+      margin: 0 0 1.5rem 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .product-item {
+      background: var(--bg-subtle);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .product-info {
+      flex: 1;
+    }
+
+    .product-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .product-price {
+      color: var(--primary-color);
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .product-details {
+      color: var(--text-mid);
+      font-size: 0.9rem;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-small {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .btn-edit {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .btn-delete {
+      background: var(--error-color);
+      color: white;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      background: var(--bg-alt);
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .container {
+        padding: 1rem;
+      }
+      
+      .form-card, .products-list {
+        padding: 1.5rem;
+      }
+      
+      .dashboard-header h1 {
+        font-size: 2rem;
+      }
+
+      .product-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .product-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="theme-toggle" onclick="toggleTheme()">
+    <i class="fas fa-moon" id="theme-icon"></i>
+  </div>
+
+  <header class="header">
+    <div class="header-content">
+      <a href="#" class="logo">
+        <i class="fas fa-leaf"></i>
+        FreshConnect
+      </a>
+      <div class="user-info">
+        <i class="fas fa-user-circle"></i>
+        <span>Supplier Portal</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="dashboard-header">
+      <h1><i class="fas fa-truck"></i> Supplier Dashboard</h1>
+      <p>Manage your raw materials and reach street food vendors</p>
+    </div>
+
+    <div class="alert success" id="successAlert">
+      <i class="fas fa-check-circle"></i> <span id="successMessage">Product added successfully!</span>
+    </div>
+
+    <div class="alert error" id="errorAlert">
+      <i class="fas fa-exclamation-circle"></i> <span id="errorMessage"></span>
+    </div>
+
+    <div class="form-card">
+      <h2><i class="fas fa-plus-circle"></i> Add New Product</h2>
+      <form id="productForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="productName"><i class="fas fa-tag"></i> Product Name</label>
+            <input type="text" id="productName" required placeholder="e.g., Fresh Tomatoes">
+          </div>
+          <div class="form-group">
+            <label for="category"><i class="fas fa-list"></i> Category</label>
+            <select id="category" required>
+              <option value="">Select Category</option>
+              <option value="vegetables">Vegetables</option>
+              <option value="fruits">Fruits</option>
+              <option value="spices">Spices</option>
+              <option value="grains">Grains & Pulses</option>
+              <option value="dairy">Dairy</option>
+              <option value="oil">Oil & Ghee</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="price"><i class="fas fa-rupee-sign"></i> Price per Unit</label>
+            <input type="number" id="price" required min="0.01" step="0.01" placeholder="0.00">
+          </div>
+          <div class="form-group">
+            <label for="imageUrl"><i class="fas fa-image"></i> Image URL (Optional)</label>
+            <input type="url" id="imageUrl" placeholder="https://example.com/image.jpg">
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn">
+          <i class="fas fa-plus"></i> Add Product to Marketplace
+        </button>
+      </form>
+    </div>
+
+    <div class="products-list">
+      <h3><i class="fas fa-list-ul"></i> Your Products</h3>
+      <div id="productsList">
+        <p style="color: var(--text-mid); text-align: center;">Loading your products...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    const API_BASE_URL = 'http://localhost:3000';
+    const SUPPLIER_ID = 1; // In a real app, this would come from login session
+
+    // Theme management
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+      const icon = document.getElementById('theme-icon');
+      icon.className = document.body.classList.contains('dark') ? 'fas fa-sun' : 'fas fa-moon';
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    // Load saved theme
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark');
+      document.getElementById('theme-icon').className = 'fas fa-sun';
+    }
+
+    // Alert management
+    function showAlert(type, message) {
+      const successAlert = document.getElementById('successAlert');
+      const errorAlert = document.getElementById('errorAlert');
+      
+      if (type === 'success') {
+        document.getElementById('successMessage').textContent = message;
+        successAlert.style.display = 'block';
+        errorAlert.style.display = 'none';
+        setTimeout(() => successAlert.style.display = 'none', 3000);
+      } else {
+        document.getElementById('errorMessage').textContent = message;
+        errorAlert.style.display = 'block';
+        successAlert.style.display = 'none';
+        setTimeout(() => errorAlert.style.display = 'none', 5000);
+      }
+    }
+
+    // API functions
+    async function addProduct(productData) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/products`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...productData,
+            supplier_id: SUPPLIER_ID
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to add product');
+        }
+
+        const result = await response.json();
+        return result;
+      } catch (error) {
+        throw error;
+      }
+    }
+
+    async function fetchSupplierProducts() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/suppliers/${SUPPLIER_ID}/products`);
+        if (!response.ok) throw new Error('Failed to fetch products');
+        const products = await response.json();
+        renderSupplierProducts(products);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        document.getElementById('productsList').innerHTML = 
+          '<p style="color: var(--error-color); text-align: center;">Failed to load products.</p>';
+      }
+    }
+
+    async function deleteProduct(productId) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
+          method: 'DELETE'
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to delete product');
+        }
+
+        showAlert('success', 'Product deleted successfully!');
+        fetchSupplierProducts(); // Refresh the list
+      } catch (error) {
+        showAlert('error', 'Failed to delete product: ' + error.message);
+      }
+    }
+
+    function renderSupplierProducts(products) {
+      const productsList = document.getElementById('productsList');
+      
+      if (products.length === 0) {
+        productsList.innerHTML = '<p style="color: var(--text-mid); text-align: center;">No products added yet.</p>';
+        return;
+      }
+      
+      productsList.innerHTML = products.map(product => `
+        <div class="product-item">
+          <div class="product-info">
+            <div class="product-name">${product.name}</div>
+            <div class="product-price">₹${product.price}</div>
+            <div class="product-details">
+              <div><strong>Category:</strong> ${product.category}</div>
+              ${product.image_url ? `<div><strong>Image:</strong> <a href="${product.image_url}" target="_blank">View</a></div>` : ''}
+            </div>
+          </div>
+          <div class="product-actions">
+            <button class="btn-small btn-delete" onclick="deleteProduct(${product.id})">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Form submission
+    document.getElementById('productForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      try {
+        const productData = {
+          name: document.getElementById('productName').value,
+          category: document.getElementById('category').value,
+          price: parseFloat(document.getElementById('price').value),
+          image_url: document.getElementById('imageUrl').value || null
+        };
+        
+        // Validation
+        if (!productData.name || !productData.category || !productData.price) {
+          throw new Error('Please fill in all required fields');
+        }
+        
+        if (productData.price <= 0) {
+          throw new Error('Price must be greater than 0');
+        }
+        
+        // Add product
+        await addProduct(productData);
+        
+        // Show success message
+        showAlert('success', 'Product added successfully!');
+        
+        // Reset form
+        e.target.reset();
+        
+        // Reload products list
+        fetchSupplierProducts();
+        
+      } catch (error) {
+        showAlert('error', error.message);
+      }
+    });
+
+    // Auto-refresh products every 5 seconds
+    function startProductPolling() {
+      setInterval(fetchSupplierProducts, 5000);
+    }
+
+    // Initialize the app
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchSupplierProducts();
+      startProductPolling();
+    });
+  </script>
+</body>
+</html>

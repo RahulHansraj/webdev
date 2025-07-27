@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VendorFresh: Raw Materials Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;700&family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #17a1fa;
+      --primary-hover: #149de8;
+      --button-fg: #fff;
+      --bg-main: #f4f8fb;
+      --bg-alt: #ffffff;
+      --bg-subtle: #eef5fc;
+      --border-color: #e0e8f0;
+      --text-main: #23282c;
+      --text-mid: #7a7d8a;
+      --card-radius: 2rem;
+      --btn-radius: 1.5rem;
+      --search-radius: 1.5rem;
+      --cart-radius: 2rem 0 0 2rem;
+    }
+    body.dark {
+      --primary-color: #cccccc;
+      --primary-hover: #dfdfdf;
+      --button-fg: #1c1f2e;
+      --bg-main: #191d30;
+      --bg-alt: #252942;
+      --bg-subtle: #2a304d;
+      --border-color: #3c4462;
+      --text-main: #f0f0f0;
+      --text-mid: #a9a9a9;
+    }
+
+
+
+    html, body {
+      font-family: 'SF Pro Display', 'Poppins', system-ui, Arial, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+      margin: 0;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.2s;
+    }
+    header {
+      background: var(--bg-alt);
+      color: var(--text-main);
+      padding: 1rem 1.7rem;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 999;
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .logo {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      user-select:none;
+      transition: color 0.3s;
+      cursor: pointer;
+    }
+    .header-actions {
+      display: flex; gap: 1rem; align-items: center;
+    }
+    .header-actions > button, .account-button, #langBtn, .mode-toggle {
+      background: var(--bg-subtle);
+      color: var(--text-mid);
+      font-size: 1.2rem;
+      cursor: pointer;
+      border-radius: var(--btn-radius);
+      padding: 8px 18px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      transition: background .2s, color .2s, box-shadow .2s;
+      outline: none;
+      position: relative;
+    }
+    .header-actions > button:hover, .account-button:hover, #langBtn:hover, .mode-toggle:hover {
+      background: var(--primary-color);
+      color: var(--button-fg);
+      border-color: var(--primary-color);
+    }
+    .mode-toggle {
+        padding: 9px 18px;
+        font-size: 1.1rem;
+    }
+    .mode-toggle i { margin-right: 0.5em;}
+    
+    .account-button {
+      font-size: 1rem;
+      font-weight: 600;
+      display:flex;
+      align-items:center;
+      gap: 8px;
+    }
+
+
+
+    /* Language Selector Styles */
+    .language-selector {
+      position: relative;
+      display: inline-block;
+    }
+    .language-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 10px);
+      background-color: var(--bg-alt);
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+      z-index: 1000;
+      border-radius: 1.2rem;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+    .language-dropdown a {
+      color: var(--text-main);
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      text-align: left;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    .language-dropdown a:hover {
+      background-color: var(--bg-subtle);
+      color: var(--primary-color);
+    }
+    .language-dropdown.show {
+      display: block;
+    }
+
+
+
+    .search-section {
+      background: var(--bg-alt);
+      padding: 1.5rem 2rem;
+      display:flex; justify-content:center;
+    }
+    .search-box {
+      width: 100%;
+      max-width: 630px;
+      display: flex;
+      border-radius: var(--search-radius);
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--border-color);
+    }
+    body.dark .search-box { background: var(--bg-subtle); }
+    .search-box input {
+      flex: 1;
+      border: none;
+      padding: 0.9rem 1.2rem;
+      font-size: 1.04rem;
+      outline: none;
+      background: transparent;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+    .search-box button {
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
+      padding: 0 1.5rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      outline: none;
+    }
+    .search-box button:hover {
+      background: var(--primary-hover);
+    }
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .filter-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      background: var(--bg-alt);
+      border-radius: var(--btn-radius);
+      padding: 1em;
+      border: 1px solid var(--border-color);
+    }
+    .filter-btn {
+      padding: 0.8rem 1.8rem;
+      border: 1px solid var(--border-color);
+      background: var(--bg-subtle);
+      color: var(--text-mid);
+      border-radius: var(--btn-radius);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      outline:none;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .filter-btn:hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+      background: var(--bg-alt);
+    }
+    .filter-btn.active {
+      background: var(--primary-color);
+      color: var(--button-fg);
+      border-color: var(--primary-color);
+    }
+    .category-section { margin-top: 2rem;}
+    h2 {
+      color: var(--text-main);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.8rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, 180px);
+      gap: 1.8rem;
+      justify-content: center;
+    }
+    .card {
+      background: var(--bg-alt);
+      border-radius: var(--card-radius);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      transition: all .2s ease-out;
+      overflow: hidden;
+    }
+    .card:hover {
+      border-color: var(--primary-hover);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-3px);
+    }
+    .card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .card-content {
+        padding: 0.9rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: .5rem;
+      color: var(--text-main);
+      flex-grow: 1;
+    }
+    .price {
+      font-weight: 700;
+      color: var(--primary-color);
+      font-size: 1.1rem;
+      margin-bottom: 0.8rem;
+    }
+    .card button {
+      background: var(--primary-color);
+      color: var(--button-fg);
+      border: none;
+      border-radius: var(--btn-radius);
+      padding: 0.8rem 1.2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      outline:none;
+      transition: background .2s;
+    }
+    .card button:hover {
+      background: var(--primary-hover);
+    }
+
+
+
+    /* Background overlay for when cart is open */
+    .cart-blur-bg {
+      position: fixed; left: 0; top: 0; right: 0; bottom: 0;
+      background-color: transparent;
+      z-index: 1000;
+      pointer-events: none;
+      transition: background-color 0.3s, opacity 0.3s;
+      opacity: 0;
+    }
+    
+    /* MODIFIED: When active, the background remains transparent */
+    .cart-blur-bg.active {
+      opacity: 1;
+      background-color: transparent; /* This removes the dark overlay */
+      pointer-events: none;
+    }
+
+
+
+    .cart-sidebar {
+      position: fixed; top: 0; right: 0;
+      width: 370px; max-width: 95vw;
+      height: 100vh;
+      background: var(--bg-alt);
+      box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+      transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+      transform: translateX(110%);
+      z-index: 1001;
+      display: flex; flex-direction: column;
+      border-left: 1px solid var(--border-color);
+      border-radius: var(--cart-radius);
+    }
+    .cart-sidebar.active { transform: translateX(0);}
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .cart-header h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    .cart-list {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .cart-item {
+      display: flex; align-items: center;
+      padding: .8rem;
+      border-bottom: 1px solid var(--border-color);
+      gap: 1em;
+    }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item-details {
+      flex-grow: 1;
+      color: var(--text-main);
+      font-weight: 600;
+    }
+    .cart-item-qty {
+      display: flex; align-items: center; gap: 0.5rem;
+      border-radius: var(--btn-radius);
+      background: var(--bg-subtle);
+      padding: 4px;
+      font-weight: 700;
+    }
+    .cart-item-qty button {
+      background: var(--primary-color); color: #fff;
+      border: none; border-radius: 1.2rem;
+      width: 25px; height: 25px; font-size: 1.1rem;
+      cursor: pointer; line-height: 1; font-weight:700; outline:none;
+      transition: background 0.2s;
+    }
+    .cart-item-qty button:hover { background: var(--primary-hover);}
+    .cart-item-qty span {
+      color: var(--text-main);
+      min-width: 25px;
+      text-align:center;
+    }
+    .cart-footer {
+      border-top: 1px solid var(--border-color);
+      padding: 1.5rem;
+      background: var(--bg-subtle);
+    }
+    .cart-total {
+      display: flex; justify-content: space-between;
+      font-weight: bold;
+      color: var(--text-main);
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+    .checkout-btn {
+      width: 100%;
+      padding: 0.9rem;
+      font-size: 1.1rem;
+      background: var(--primary-color);
+      color: var(--button-fg);
+      border: none; border-radius: var(--btn-radius);
+      cursor: pointer; font-weight: 700;
+      outline:none;
+      transition: background 0.2s;
+    }
+    .checkout-btn:hover {
+      background: var(--primary-hover);
+    }
+    .close-cart-btn {
+      font-size: 1.3rem;
+      color: var(--text-mid);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      outline:none;
+      transition: color 0.2s;
+    }
+    .close-cart-btn:hover {
+      color: var(--text-main);
+    }
+    
+    /* Profile View Styles */
+    #profile-view {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: var(--bg-alt);
+        border-radius: var(--card-radius);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .profile-form-group {
+        margin-bottom: 1.5rem;
+        text-align: left;
+    }
+    .profile-form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    .profile-form-group input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 1rem;
+        font-size: 1rem;
+        box-sizing: border-box;
+        border: 1px solid var(--border-color);
+        background-color: var(--bg-subtle);
+        color: var(--text-main);
+    }
+    .profile-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+    
+    @media (max-width:700px) {
+      .grid { gap: 1rem;}
+      header, .search-section { padding: 1rem;}
+      .cart-sidebar { width:95vw; border-radius:0; }
+      h2 { font-size: 1.2rem;}
+      .filter-bar {gap: 0.5rem;}
+      main { padding: 0 0.5em;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="logo" id="logo-btn"><i class="fa-solid fa-leaf"></i> VendorFresh</span>
+    <div class="header-actions">
+      <button title="Orders" data-key="ordersTitle"><i class="fa-solid fa-box"></i></button>
+      <button id="cartBtn" title="View cart" data-key="cartBtnTitle"><i class="fa-solid fa-shopping-cart"></i></button>
+      
+      <div class="language-selector">
+        <button id="langBtn" title="Change Language" data-key="langBtnTitle">
+            <i class="fa-solid fa-globe"></i>
+        </button>
+        <div id="langDropdown" class="language-dropdown">
+            <a href="#" onclick="changeLanguage('en'); return false;">English</a>
+            <a href="#" onclick="changeLanguage('ta'); return false;">தமிழ் (Tamil)</a>
+            <a href="#" onclick="changeLanguage('hi'); return false;">हिन्दी (Hindi)</a>
+        </div>
+      </div>
+
+
+
+      <button id="modeBtn" class="mode-toggle" title="Toggle light/dark mode" data-key="modeBtnTitle">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+      <button class="account-button" id="accountBtn" title="My Account" data-key="accountBtnTitle">
+        <i class="fa-solid fa-user"></i>
+      </button>
+      <button id="logoutBtn" title="Logout"><i class="fa-solid fa-sign-out-alt"></i></button>
+    </div>
+  </header>
+  
+  <main>
+    <div id="product-view">
+        <div class="search-section">
+            <form class="search-box" id="searchForm" autocomplete="off">
+              <input id="searchInput" type="text" data-key="searchPlaceholder">
+              <button type="submit"><i class="fa-solid fa-search"></i></button>
+            </form>
+        </div>
+        <div id="filterBar" class="filter-bar"></div>
+        <div id="mainContent"></div>
+    </div>
+
+
+
+    <div id="profile-view" style="display: none;">
+        <h2>My Account</h2>
+        <form id="profile-form">
+            <div class="profile-form-group">
+                <label for="profile-name">Full Name</label>
+                <input type="text" id="profile-name" class="input-field" required>
+            </div>
+            <div class="profile-form-group">
+                <label for="profile-email">Email Address</label>
+                <input type="email" id="profile-email" class="input-field">
+            </div>
+            <div class="profile-form-group">
+                <label for="profile-phone">Phone Number</label>
+                <input type="tel" id="profile-phone" class="input-field" required>
+            </div>
+            <div class="profile-buttons">
+                <button type="button" class="filter-btn" id="back-to-products-btn">Back</button>
+                <button type="submit" class="checkout-btn">Save Changes</button>
+            </div>
+        </form>
+    </div>
+  </main>
+  
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+      <h3 data-key="cartTitle">Shopping Cart</h3>
+      <button class="close-cart-btn" id="closeCart"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="cart-list" id="cartList"></div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span data-key="totalLabel">Total:</span>
+        <span>₹<span id="cartTotal">0</span></span>
+      </div>
+      <button class="checkout-btn" data-key="checkoutBtnText">Proceed to Checkout</button>
+    </div>
+  </div>
+  <div class="cart-blur-bg" id="cartBlurBg"></div>
+
+
+
+  <script>
+    // --- TRANSLATION DATA ---
+    const translations = {
+        en: {
+            ordersTitle: "Orders",
+            cartBtnTitle: "View cart",
+            langBtnTitle: "Change Language",
+            modeBtnTitle: "Toggle light/dark mode",
+            accountBtnTitle: "My Account",
+            searchPlaceholder: "Search for any raw material...",
+            cartTitle: "Shopping Cart",
+            totalLabel: "Total:",
+            checkoutBtnText: "Proceed to Checkout",
+            emptyCartText: "Your cart is empty.",
+            allProducts: "All Products",
+            resultsFor: "Results for",
+            noMatchesFor: "No matches for",
+            addToCart: "Add to cart"
+        },
+        ta: {
+            ordersTitle: "ஆர்டர்கள்",
+            cartBtnTitle: "கார்டைக் காண்க",
+            langBtnTitle: "மொழியை மாற்றவும்",
+            modeBtnTitle: "லைட்/டார்க் பயன்முறையை மாற்றவும்",
+            accountBtnTitle: "என் கணக்கு",
+            searchPlaceholder: "எந்த மூலப்பொருளையும் தேடுங்கள்...",
+            cartTitle: "ஷாப்பிங் கார்ட்",
+            totalLabel: "மொத்தம்:",
+            checkoutBtnText: "செக் அவுட்டிற்கு தொடரவும்",
+            emptyCartText: "உங்கள் கார்ட் காலியாக உள்ளது.",
+            allProducts: "அனைத்து தயாரிப்புகள்",
+            resultsFor: "தேடல் முடிவுகள்",
+            noMatchesFor: "பொருத்தங்கள் இல்லை",
+            addToCart: "கார்ட்டில் சேர்க்கவும்"
+        },
+        hi: {
+            ordersTitle: "आदेश",
+            cartBtnTitle: "कार्ट देखें",
+            langBtnTitle: "भाषा बदलें",
+            modeBtnTitle: "लाइट/डार्क मोड टॉगल करें",
+            accountBtnTitle: "मेरा खाता",
+            searchPlaceholder: "किसी भी कच्चे माल के लिए खोजें...",
+            cartTitle: "शॉपिंग कार्ट",
+            totalLabel: "कुल:",
+            checkoutBtnText: "चेकआउट के लिए आगे बढ़ें",
+            emptyCartText: "आपकी कार्ट खाली है।",
+            allProducts: "सभी उत्पाद",
+            resultsFor: "के लिए परिणाम",
+            noMatchesFor: "के लिए कोई मेल नहीं",
+            addToCart: "कार्ट में जोड़ें"
+        }
+    };
+    
+    // --- DYNAMIC DATA ---
+    const imageFallback = 'https://placehold.co/400x400/eef5fc/333?text=Image';
+    const products = {
+      vegetables: [
+        {id: 'veg1', name: { en: "Potatoes", ta: "உருளைக்கிழங்கு", hi: "आलू" }, img: "https://cdn.pixabay.com/photo/2014/04/22/02/56/potato-329678_1280.jpg", price: 28},
+        {id: 'veg2', name: { en: "Onions", ta: "வெங்காயம்", hi: "प्याज" }, img: "https://cdn.pixabay.com/photo/2017/01/20/15/06/onion-1995056_1280.jpg", price: 24},
+        {id: 'veg3', name: { en: "Tomatoes", ta: "தக்காளி", hi: "टमाटर" }, img: "https://cdn.pixabay.com/photo/2016/03/05/19/02/tomato-1238253_1280.jpg", price: 32},
+      ],
+      spices: [
+        {id: 'spc1', name: { en: "Chilli Powder", ta: "மிளகாய்த்தூள்", hi: "मिर्च पाउडर" }, img: "https://cdn.pixabay.com/photo/2016/11/21/17/48/spices-1847097_1280.jpg", price: 55},
+        {id: 'spc2', name: { en: "Turmeric Powder", ta: "மஞ்சள்தூள்", hi: "हल्दी पाउडर" }, img: "https://cdn.pixabay.com/photo/2017/06/29/18/46/turmeric-2457862_1280.jpg", price: 40},
+        {id: 'spc3', name: { en: "Garam Masala", ta: "கரம் மசாலா", hi: "गरम मसाला" }, img: "https://cdn.pixabay.com/photo/2014/12/21/23/50/spices-579120_1280.jpg", price: 60},
+      ],
+      packedGoods: [
+        {id: 'pkg1', name: { en: "Atta (Flour)", ta: "ஆட்டா (மாவு)", hi: "आटा" }, img: "https://cdn.pixabay.com/photo/2016/07/06/16/48/flour-1492021_1280.jpg", price: 45},
+        {id: 'pkg2', name: { en: "Basmati Rice", ta: "பாஸ்மதி அரிசி", hi: "बासमती चावल" }, img: "https://cdn.pixabay.com/photo/2018/05/30/19/42/rice-3444980_1280.jpg", price: 78},
+        {id: 'pkg3', name: { en: "Sunflower Oil (1L)", ta: "சூரியகாந்தி எண்ணெய் (1L)", hi: "सूरजमुखी तेल (1L)" }, img: "https://cdn.pixabay.com/photo/2017/08/07/05/08/cooking-oil-2592032_1280.jpg", price: 95},
+        {id: 'pkg4', name: { en: "Paneer (200g)", ta: "பன்னீர் (200g)", hi: "पनीर (200g)" }, img: "https://cdn.pixabay.com/photo/2021/07/12/01/37/paneer-6406547_1280.jpg", price: 80},
+      ]
+    };
+    const categoryTitles = {
+      all: { en: "All", ta: "அனைத்து", hi: "सभी" },
+      vegetables: { en: "Fresh Vegetables", ta: "புதிய காய்கறிகள்", hi: "ताज़ी सब्जियाँ" },
+      spices: { en: "Spices & Masalas", ta: "மசாலாப் பொருட்கள்", hi: "मसाले" },
+      packedGoods: { en: "Packed Goods", ta: "பேக் செய்யப்பட்டவை", hi: "पैक किया हुआ सामान" }
+    };
+
+
+
+    // --- APPLICATION STATE ---
+    let currentLang = 'en';
+    let currentCategory = 'all';
+    let cart = {};
+    let currentUser = null;
+
+
+
+    // --- DOM REFERENCES ---
+    const mainContent = document.getElementById('mainContent');
+    const filterBar = document.getElementById('filterBar');
+    const accountBtn = document.getElementById('accountBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const productView = document.getElementById('product-view');
+    const profileView = document.getElementById('profile-view');
+    const logoBtn = document.getElementById('logo-btn');
+    const backToProductsBtn = document.getElementById('back-to-products-btn');
+    const cartSidebar = document.getElementById('cartSidebar');
+    const cartBlurBg = document.getElementById('cartBlurBg');
+
+
+
+    // --- CORE FUNCTIONS ---
+    function getAllProducts() { return Object.values(products).flat(); }
+    function findProductById(productId) { return getAllProducts().find(p => p.id === productId); }
+
+
+
+    function updateUIText() {
+        const t = translations[currentLang];
+        document.querySelectorAll('[data-key]').forEach(el => {
+            const key = el.dataset.key;
+            if (t[key]) {
+                if (el.tagName === 'INPUT' && el.placeholder !== undefined) {
+                    el.placeholder = t[key];
+                } else if (el.title !== undefined && (el.tagName === 'BUTTON' || el.tagName === 'A')) {
+                    el.title = t[key];
+                } else {
+                    el.innerHTML = el.innerHTML.includes('<i') ? `${el.querySelector('i').outerHTML} ${t[key]}` : t[key];
+                }
+            }
+        });
+        renderFilterButtons();
+        const searchInput = document.getElementById('searchInput').value;
+        if (searchInput) {
+            doSearch(searchInput);
+        } else {
+            filterCategory(currentCategory, filterBar.querySelector(`[data-category="${currentCategory}"]`));
+        }
+        if (cartSidebar.classList.contains('active')) {
+            showCart(); // Re-render cart if already open
+        }
+    }
+    
+    function renderProductGrid(title, productList) {
+      mainContent.innerHTML = "";
+      if (productList.length === 0) {
+        mainContent.innerHTML = `<p style="text-align:center; color:var(--text-mid); margin-top: 2rem;">No products found.</p>`;
+        return;
+      }
+      const section = document.createElement('section');
+      section.className = 'category-section';
+      const h2 = document.createElement('h2');
+      h2.textContent = title;
+      section.appendChild(h2);
+      const grid = document.createElement('div');
+      grid.className = 'grid';
+      productList.forEach(prod => {
+        const el = document.createElement('div');
+        el.className = "card";
+        el.innerHTML = `
+          <img src="${prod.img}" alt="${prod.name[currentLang]}" onerror="this.onerror=null;this.src='${imageFallback}';">
+          <div class="card-content">
+            <h3 class="card-title">${prod.name[currentLang]}</h3>
+            <div class="price">₹${prod.price} / unit</div>
+            <button onclick="addToCart('${prod.id}')"><i class="fa-solid fa-cart-plus"></i> ${translations[currentLang].addToCart}</button>
+          </div>
+        `;
+        grid.appendChild(el);
+      });
+      section.appendChild(grid);
+      mainContent.appendChild(section);
+    }
+
+
+
+    function renderFilterButtons() {
+      let buttonsHTML = `<button class="filter-btn" data-category="all" onclick="filterCategory('all', this)">${categoryTitles.all[currentLang]}</button>`;
+      for (const category in products) {
+        buttonsHTML += `<button class="filter-btn" data-category="${category}" onclick="filterCategory('${category}', this)">${categoryTitles[category][currentLang]}</button>`;
+      }
+      filterBar.innerHTML = buttonsHTML;
+      const activeBtn = filterBar.querySelector(`[data-category="${currentCategory}"]`);
+      if (activeBtn) {
+          activeBtn.classList.add('active');
+      } else {
+          filterBar.querySelector('[data-category="all"]').classList.add('active');
+      }
+    }
+    
+    function filterCategory(selectedCategory, clickedButton) {
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      if(clickedButton) clickedButton.classList.add('active');
+      document.getElementById('searchInput').value = '';
+      currentCategory = selectedCategory;
+      if (selectedCategory === 'all') {
+        renderProductGrid(translations[currentLang].allProducts, getAllProducts());
+      } else {
+        renderProductGrid(categoryTitles[selectedCategory][currentLang], products[selectedCategory]);
+      }
+    }
+    
+    function doSearch(term) {
+      let base = (currentCategory === 'all') ? getAllProducts() : [...products[currentCategory]];
+      const filtered = base.filter(p =>
+        p.name[currentLang].toLowerCase().includes(term.toLowerCase())
+      );
+      renderProductGrid(
+        `${translations[currentLang].resultsFor} "${term}"`,
+        filtered
+      );
+    }
+    
+    document.getElementById('searchForm').onsubmit = function(e){
+      e.preventDefault();
+      const term = document.getElementById('searchInput').value.trim();
+      if(term) doSearch(term);
+    };
+
+
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+      const val = this.value.trim();
+      if (!val) {
+        filterCategory(currentCategory, filterBar.querySelector(`[data-category="${currentCategory}"]`));
+      } else {
+        doSearch(val);
+      }
+    });
+
+
+
+    // --- Cart logic ---
+    
+    async function addToCart(productId) {
+      cart[productId] = (cart[productId] || 0) + 1;
+      await saveCartToDB();
+      showCart(); // Will open and update the cart
+    }
+
+
+
+    function showCart() {
+      cartSidebar.classList.add('active');
+      cartBlurBg.classList.add('active');
+
+
+
+      const list = document.getElementById('cartList');
+      let total = 0, out = "";
+      Object.keys(cart).forEach(productId => {
+        const item = findProductById(productId);
+        if (item) {
+            const qty = cart[productId];
+            total += item.price * qty;
+            out += `
+              <div class="cart-item">
+                <img src="${item.img}" alt="${item.name[currentLang]}" style="width:50px; height:50px; border-radius:8px; object-fit:cover;"
+                  onerror="this.onerror=null;this.src='${imageFallback}';">
+                <div class="cart-item-details">
+                    <div>${item.name[currentLang]}</div>
+                    <div style="font-size:0.9rem; color:var(--text-mid)">₹${item.price} x ${qty} = ₹${item.price * qty}</div>
+                </div>
+                <div class="cart-item-qty">
+                  <button onclick="updateQty('${productId}',-1)">-</button>
+                  <span>${qty}</span>
+                  <button onclick="updateQty('${productId}',1)">+</button>
+                </div>
+              </div>
+            `;
+        }
+      });
+      list.innerHTML = out || `<div style='color:var(--text-mid); padding: 2rem 0; text-align:center;'>${translations[currentLang].emptyCartText}</div>`;
+      document.getElementById('cartTotal').textContent = total;
+    }
+    
+    async function updateQty(productId, d) {
+      if (cart[productId]) {
+        cart[productId] += d;
+        if(cart[productId] <= 0) delete cart[productId];
+        await saveCartToDB();
+        showCart(); // Re-render the cart after quantity change
+      }
+    }
+    
+    async function saveCartToDB() {
+        if (!currentUser) return; // Don't save if there's no user
+        try {
+            // We use localStorage as the "DB" in this example.
+            // The key is user-specific to handle multiple users.
+            console.log("Saving cart for user:", currentUser.id, JSON.stringify(cart));
+            localStorage.setItem(`vendorFreshCart_${currentUser.id}`, JSON.stringify(cart));
+        } catch (error) {
+            console.error("Failed to save cart to localStorage:", error);
+            // You could add fallback error handling here if needed
+        }
+    }
+    
+    function closeCart() {
+        cartSidebar.classList.remove('active');
+        cartBlurBg.classList.remove('active');
+    }
+
+
+
+    document.getElementById('cartBtn').onclick = showCart;
+    document.getElementById('closeCart').onclick = closeCart;
+
+
+
+    // Dark/Light Mode
+    const modeBtn = document.getElementById('modeBtn');
+    let isDark = false;
+    function setMode(dark) {
+      isDark = dark;
+      document.body.classList.toggle('dark', dark);
+      modeBtn.innerHTML = dark
+        ? `<i class="fa-solid fa-sun"></i>`
+        : `<i class="fa-solid fa-moon"></i>`;
+      modeBtn.title = dark ? 'Activate Light Mode' : 'Activate Dark Mode';
+    }
+    modeBtn.onclick = function() {
+      setMode(!isDark);
+    };
+
+
+
+    // Language Dropdown Logic
+    const langBtn = document.getElementById('langBtn');
+    const langDropdown = document.getElementById('langDropdown');
+
+
+
+    langBtn.onclick = function(event) {
+      event.stopPropagation();
+      langDropdown.classList.toggle('show');
+    };
+
+
+
+    window.onclick = function(event) {
+      if (!langBtn.contains(event.target) && !langDropdown.contains(event.target)) {
+        langDropdown.classList.remove('show');
+      }
+    };
+
+
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      langDropdown.classList.remove('show');
+      updateUIText();
+    }
+    
+    // FIX START: Modified the logout function to be more robust.
+    // It now ensures the cart is saved before logging out and clears the local state.
+    async function logout() {
+        // Save the final state of the cart to ensure no data is lost
+        await saveCartToDB();
+
+        // Clear the user session from localStorage
+        localStorage.removeItem('vendorFreshUser');
+
+        // Reset the application's state variables
+        currentUser = null;
+        cart = {};
+
+        // Redirect to the login page
+        window.location.href = 'login.html';
+    }
+    // FIX END
+    
+    function showProfileView() {
+        productView.style.display = 'none';
+        profileView.style.display = 'block';
+        
+        document.getElementById('profile-name').value = currentUser.full_name;
+        document.getElementById('profile-email').value = currentUser.email || '';
+        document.getElementById('profile-phone').value = currentUser.phone_number || '';
+    }
+    
+    function showProductView() {
+        profileView.style.display = 'none';
+        productView.style.display = 'block';
+    }
+
+
+
+    // --- INITIALIZE APP ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // FIX START: Overhauled the initialization logic for user and cart.
+        // This is the main fix for the cart persistence issue.
+
+        // 1. Check for a logged-in user.
+        const userString = localStorage.getItem('vendorFreshUser');
+        if (!userString) {
+            // If no user data is found, the user is not logged in.
+            // Redirect them to the login page instead of creating a mock user.
+            // This makes this page a "protected route".
+            window.location.href = 'login.html';
+            return; // Stop further execution of the script on this page.
+        }
+
+        // 2. If a user is found, parse their data and set the global currentUser.
+        currentUser = JSON.parse(userString);
+        
+        // 3. Load the user-specific cart from localStorage.
+        const cartString = localStorage.getItem(`vendorFreshCart_${currentUser.id}`);
+        if (cartString) {
+            // If a cart exists in storage, parse it.
+            cart = JSON.parse(cartString);
+        } else {
+            // Otherwise, initialize an empty cart.
+            cart = {};
+        }
+
+        // The rest of the original initialization logic can now safely assume
+        // that `currentUser` and `cart` are correctly set up.
+        // FIX END
+
+        // --- Continue with page setup ---
+        accountBtn.innerHTML = `<i class="fa-solid fa-user"></i> ${currentUser.full_name.split(' ')[0]}`;
+        logoutBtn.addEventListener('click', logout);
+        
+        accountBtn.addEventListener('click', showProfileView);
+        logoBtn.addEventListener('click', showProductView);
+        backToProductsBtn.addEventListener('click', showProductView);
+        
+        updateUIText();
+
+        // --- PROFILE SAVE HANDLER ---
+        document.getElementById('profile-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('profile-name').value.trim();
+            const email = document.getElementById('profile-email').value.trim();
+            const phone = document.getElementById('profile-phone').value.trim();
+
+            currentUser.full_name = name;
+            currentUser.email = email;
+            currentUser.phone_number = phone;
+
+            accountBtn.innerHTML = `<i class="fa-solid fa-user"></i> ${name.split(' ')[0]}`;
+            localStorage.setItem('vendorFreshUser', JSON.stringify(currentUser));
+
+            try {
+                console.log("Updating profile for user:", currentUser.id, JSON.stringify(currentUser));
+                alert("Profile updated successfully!");
+            } catch (error) {
+                console.error("Failed to update profile:", error);
+                alert("Failed to update profile. Please try again.");
+            }
+        });
+    });
+  </script>
+  
+</body>
+</html>

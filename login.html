@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Sign In - VendorFresh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- intl-tel-input CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+    <!-- Google Platform Library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        :root {
+            --background-light: #f0f2f5;
+            --form-background-light: #ffffff;
+            --text-light: #1d1d1f;
+            --secondary-text-light: #6e6e73;
+            --link-light: #0066cc;
+            --button-light: #0071e3;
+            --button-hover-light: #0077ed;
+            --input-border-light: #d2d2d7;
+            --input-focus-border-light: #0071e3;
+            --shadow-light: 0 10px 40px rgba(0, 0, 0, 0.1);
+
+            --background-dark: #121212;
+            --form-background-dark: #1e1e1e;
+            --text-dark: #e0e0e0;
+            --secondary-text-dark: #a0a0a0;
+            --link-dark: #2997ff;
+            --button-dark: #0a84ff;
+            --button-hover-dark: #3c9eff;
+            --input-border-dark: #444;
+            --input-focus-border-dark: #0a84ff;
+            --shadow-dark: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.light-mode {
+            background-color: var(--background-light);
+            color: var(--text-light);
+        }
+
+        body.dark-mode {
+            background-color: var(--background-dark);
+            color: var(--text-dark);
+        }
+
+        .card {
+            width: 100%;
+            max-width: 580px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .form-container {
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        
+        body.light-mode .form-container {
+            background: var(--form-background-light);
+            box-shadow: var(--shadow-light);
+        }
+
+        body.dark-mode .form-container {
+            background: var(--form-background-dark);
+            box-shadow: var(--shadow-dark);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 30px 0;
+            white-space: nowrap;
+        }
+        
+        .view { display: none; }
+        .view.active { display: block; }
+
+        .input-wrapper { 
+            position: relative; 
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 17px;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        body.light-mode .input-field {
+            border: 1px solid var(--input-border-light);
+            background-color: #f9f9f9;
+        }
+        
+        body.dark-mode .input-field {
+            border: 1px solid var(--input-border-dark);
+            background-color: #2a2a2a;
+            color: var(--text-dark);
+        }
+
+        .input-field:focus {
+            outline: none;
+        }
+        
+        body.light-mode .input-field:focus {
+            border-color: var(--input-focus-border-light);
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+        }
+        
+        body.dark-mode .input-field:focus {
+            border-color: var(--input-focus-border-dark);
+            box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.25);
+        }
+        
+        .optional-label {
+            font-size: 13px;
+            font-weight: 500;
+            display: block;
+            text-align: left;
+            margin-top: -15px;
+            margin-bottom: 20px;
+            padding-left: 5px;
+        }
+        
+        body.light-mode .optional-label { color: #8a8a8e; }
+        body.dark-mode .optional-label { color: #8e8e93; }
+        
+        .full-width-button, .alt-signin-button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        body.light-mode .full-width-button {
+            background-color: var(--button-light);
+            color: white;
+        }
+        body.dark-mode .full-width-button {
+            background-color: var(--button-dark);
+            color: white;
+        }
+        
+        body.light-mode .full-width-button:hover {
+             background-color: var(--button-hover-light);
+        }
+        body.dark-mode .full-width-button:hover {
+             background-color: var(--button-hover-dark);
+        }
+        
+        .alt-signin-button {
+            margin-top: 15px;
+        }
+        
+        body.light-mode .alt-signin-button {
+            background-color: #e9e9e9;
+            color: #333;
+        }
+        body.dark-mode .alt-signin-button {
+            background-color: #333;
+            color: #f0f0f0;
+        }
+        
+        .divider {
+            font-size: 14px;
+            margin: 30px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        body.light-mode .divider { color: var(--secondary-text-light); }
+        body.dark-mode .divider { color: var(--secondary-text-dark); }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid;
+            opacity: 0.2;
+        }
+        .divider::before { margin-right: 1em; }
+        .divider::after { margin-left: 1em; }
+
+        .links-container { margin-top: 30px; }
+
+        .link {
+            text-decoration: none;
+            font-size: 15px;
+            cursor: pointer;
+            display: block;
+            margin-top: 15px;
+        }
+        
+        body.light-mode .link { color: var(--link-light); }
+        body.dark-mode .link { color: var(--link-dark); }
+
+        .link:hover { text-decoration: underline; }
+
+        .top-right-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .control-button {
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+            border: none;
+        }
+
+        body.light-mode .control-button { background-color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        body.dark-mode .control-button { background-color: #2a2a2a; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+
+        .control-button i { font-size: 18px; }
+        
+        #theme-icon-sun { display: none; }
+        body.dark-mode #theme-icon-sun { display: block; }
+        body.dark-mode #theme-icon-moon { display: none; }
+        
+        .language-dropdown {
+            display: none;
+            position: absolute;
+            top: 45px;
+            right: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 10;
+        }
+        body.light-mode .language-dropdown { background-color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        body.dark-mode .language-dropdown { background-color: #2a2a2a; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+        
+        .language-dropdown a {
+            display: block;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        body.light-mode .language-dropdown a { color: var(--text-light); }
+        body.dark-mode .language-dropdown a { color: var(--text-dark); }
+        
+        body.light-mode .language-dropdown a:hover { background-color: #f0f0f0; }
+        body.dark-mode .language-dropdown a:hover { background-color: #3a3a3a; }
+
+        /* Style for Google Button Container */
+        #google-signin-btn-container-login, #google-signin-btn-container-signup {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="light-mode">
+    
+    <div class="top-right-controls">
+        <div class="language-selector">
+            <button class="control-button" id="lang-btn">
+                <i class="fas fa-globe"></i>
+            </button>
+            <div class="language-dropdown" id="lang-dropdown">
+                <a href="#" data-lang="en">English</a>
+                <a href="#" data-lang="ta">தமிழ்</a>
+                <a href="#" data-lang="hi">हिन्दी</a>
+            </div>
+        </div>
+        <button class="control-button" id="theme-toggle-btn">
+            <i class="fas fa-moon" id="theme-icon-moon"></i>
+            <i class="fas fa-sun" id="theme-icon-sun"></i>
+        </button>
+    </div>
+
+    <div class="card">
+        <div class="form-container">
+            <!-- Login View -->
+            <div id="login-view" class="view active">
+                <h1 data-key="loginTitle">Sign in with VendorFresh Account</h1>
+                <form id="login-form">
+                    <div class="input-wrapper">
+                        <input type="text" class="input-field" id="login-identifier" data-key-placeholder="emailPlaceholder" placeholder="Email or Phone Number" required>
+                    </div>
+                    <div class="input-wrapper">
+                        <input type="password" class="input-field" id="login-password" data-key-placeholder="passwordPlaceholder" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="full-width-button" data-key="signIn">Sign In</button>
+                </form>
+                <div class="divider" data-key="orDivider">or</div>
+                
+                <!-- Google Sign-In Button Container -->
+                <div id="google-signin-btn-container-login"></div>
+
+                <div class="links-container">
+                    <a href="#" class="link" data-target="forgot-password-view" data-key="forgotPassword">Forgot Password?</a>
+                    <a href="#" class="link" data-target="signup-view" data-key="createAccountLink">Don't have an account? Sign Up</a>
+                </div>
+            </div>
+            
+            <!-- Signup View -->
+            <div id="signup-view" class="view">
+                <h1 data-key="signupTitle">Create your VendorFresh Account</h1>
+                <form id="signup-form">
+                    <div class="input-wrapper">
+                        <input type="text" class="input-field" id="signup-name" data-key-placeholder="namePlaceholder" placeholder="Full Name" required>
+                    </div>
+                    <div class="input-wrapper">
+                        <input type="email" class="input-field" id="signup-email" data-key-placeholder="emailPlaceholderOptional" placeholder="Email Address">
+                    </div>
+                    <span class="optional-label" data-key="optionalLabel">(Optional)</span>
+                    <div class="input-wrapper">
+                        <input type="tel" id="phone" class="input-field" required>
+                    </div>
+                    <div class="input-wrapper">
+                        <input type="password" class="input-field" id="signup-password" data-key-placeholder="createPasswordPlaceholder" placeholder="Create Password" required>
+                    </div>
+                    <button type="submit" class="full-width-button" data-key="createAccountBtn">Create Account</button>
+                </form>
+                <div class="divider" data-key="orDivider">or</div>
+
+                <!-- Google Sign-Up Button Container -->
+                <div id="google-signin-btn-container-signup"></div>
+
+                <div class="links-container">
+                    <a href="#" class="link" data-target="login-view" data-key="alreadyHaveAccount">Already have an account? Sign In</a>
+                </div>
+            </div>
+
+            <!-- Forgot Password View -->
+            <div id="forgot-password-view" class="view">
+                <h1 data-key="forgotTitle">Find Your Account</h1>
+                <p style="font-size: 15px; margin-bottom: 25px;" data-key="forgotSubtitle">Please enter your details to find your account.</p>
+                <form id="forgot-form">
+                    <div class="input-wrapper">
+                        <input type="text" class="input-field" id="forgot-identifier" data-key-placeholder="forgotIdentifierPlaceholder" placeholder="Email or Phone Number" required>
+                    </div>
+                    <button type="submit" class="full-width-button" data-key="findAccountBtn">Find Account</button>
+                </form>
+                <div class="links-container">
+                    <a href="#" class="link" data-target="login-view" data-key="backToSignIn">Back to Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- intl-tel-input JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script>
+        const translations = {
+            en: {
+                loginTitle: "Sign in with VendorFresh Account",
+                signupTitle: "Create your VendorFresh Account",
+                forgotTitle: "Find Your Account",
+                forgotSubtitle: "Please enter your details to find your account.",
+                emailPlaceholder: "Email or Phone Number",
+                passwordPlaceholder: "Password",
+                signIn: "Sign In",
+                orDivider: "or",
+                forgotPassword: "Forgot Password?",
+                createAccountLink: "Don't have an account? Sign Up",
+                namePlaceholder: "Full Name",
+                emailPlaceholderOptional: "Email Address",
+                optionalLabel: "(Optional)",
+                createPasswordPlaceholder: "Create Password",
+                createAccountBtn: "Create Account",
+                alreadyHaveAccount: "Already have an account? Sign In",
+                findAccountBtn: "Find Account",
+                backToSignIn: "Back to Sign In",
+                forgotIdentifierPlaceholder: "Email or Phone Number"
+            },
+            ta: {
+                loginTitle: "VendorFresh கணக்கில் உள்நுழையவும்",
+                signupTitle: "உங்கள் VendorFresh கணக்கை உருவாக்கவும்",
+                forgotTitle: "உங்கள் கணக்கைக் கண்டறியவும்",
+                forgotSubtitle: "உங்கள் கணக்கைக் கண்டறிய விவரங்களை உள்ளிடவும்.",
+                emailPlaceholder: "மின்னஞ்சல் அல்லது தொலைபேசி எண்",
+                passwordPlaceholder: "கடவுச்சொல்",
+                signIn: "உள்நுழை",
+                orDivider: "அல்லது",
+                forgotPassword: "கடவுச்சொல்லை மறந்துவிட்டீர்களா?",
+                createAccountLink: "கணக்கு இல்லையா? பதிவு செய்க",
+                namePlaceholder: "முழு பெயர்",
+                emailPlaceholderOptional: "மின்னஞ்சல் முகவரி",
+                optionalLabel: "(விருப்பத்தேர்வு)",
+                createPasswordPlaceholder: "கடவுச்சொல்லை உருவாக்கவும்",
+                createAccountBtn: "கணக்கை உருவாக்கு",
+                alreadyHaveAccount: "ஏற்கனவே கணக்கு உள்ளதா? உள்நுழை",
+                findAccountBtn: "கணக்கைக் கண்டறியவும்",
+                backToSignIn: "உள்நுழைவுக்குத் திரும்பு",
+                forgotIdentifierPlaceholder: "மின்னஞ்சல் அல்லது தொலைபேசி எண்"
+            },
+            hi: {
+                loginTitle: "VendorFresh खाते में साइन इन करें",
+                signupTitle: "अपना VendorFresh खाता बनाएं",
+                forgotTitle: "अपना खाता खोजें",
+                forgotSubtitle: "अपना खाता खोजने के लिए कृपया अपना विवरण दर्ज करें।",
+                emailPlaceholder: "ईमेल या फ़ोन नंबर",
+                passwordPlaceholder: "पासवर्ड",
+                signIn: "साइन इन करें",
+                orDivider: "या",
+                forgotPassword: "पासवर्ड भूल गए?",
+                createAccountLink: "खाता नहीं है? साइन अप करें",
+                namePlaceholder: "पूरा नाम",
+                emailPlaceholderOptional: "ईमेल पता",
+                optionalLabel: "(वैकल्पिक)",
+                createPasswordPlaceholder: "पासवर्ड बनाएं",
+                createAccountBtn: "खाता बनाएं",
+                alreadyHaveAccount: "पहले से ही एक खाता है? साइन इन करें",
+                findAccountBtn: "खाता खोजें",
+                backToSignIn: "साइन इन पर वापस जाएं",
+                forgotIdentifierPlaceholder: "ईमेल या फ़ोन नंबर"
+            }
+        };
+
+        const views = document.querySelectorAll('.view');
+        const links = document.querySelectorAll('.link');
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const langBtn = document.getElementById('lang-btn');
+        const langDropdown = document.getElementById('lang-dropdown');
+        
+        let currentLang = 'en';
+
+        function switchView(targetId) {
+            views.forEach(view => view.classList.remove('active'));
+            const targetView = document.getElementById(targetId);
+            if (targetView) targetView.classList.add('active');
+        }
+        
+        function applyTranslations() {
+            const langPack = translations[currentLang];
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.dataset.key;
+                if (langPack[key]) el.textContent = langPack[key];
+            });
+            document.querySelectorAll('[data-key-placeholder]').forEach(el => {
+                const key = el.dataset.keyPlaceholder;
+                if (langPack[key]) el.placeholder = langPack[key];
+            });
+        }
+
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = e.currentTarget.getAttribute('data-target');
+                if (targetId) switchView(targetId);
+            });
+        });
+
+        // Theme Toggle Logic
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            document.body.classList.toggle('light-mode');
+        });
+        
+        // Language Logic
+        langBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            langDropdown.style.display = langDropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!langBtn.contains(e.target)) {
+                langDropdown.style.display = 'none';
+            }
+        });
+
+        langDropdown.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                currentLang = e.target.dataset.lang;
+                applyTranslations();
+                langDropdown.style.display = 'none';
+            }
+        });
+        
+        // Phone Input Initialization
+        const phoneInput = document.querySelector("#phone");
+        const iti = window.intlTelInput(phoneInput, {
+            initialCountry: "auto",
+            geoIpLookup: function(callback) {
+                fetch("https://ipapi.co/json")
+                  .then(res => res.json())
+                  .then(data => callback(data.country_code))
+                  .catch(() => callback("in")); // Default to India
+            },
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
+        // --- Function to handle successful login and data storage ---
+        function handleLoginSuccess(result) {
+            // Store user details in localStorage
+            localStorage.setItem('vendorFreshUser', JSON.stringify(result.user));
+            
+            // **FIX**: Store the cart in localStorage with a USER-SPECIFIC key.
+            // This ensures that each user's cart is stored separately and correctly retrieved later.
+            localStorage.setItem(`vendorFreshCart_${result.user.id}`, JSON.stringify(result.cart || {}));
+            
+            // Redirect to the main portal page
+            window.location.href = 'portal.html';
+        }
+
+        // --- Forms submission ---
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const identifier = document.getElementById('login-identifier').value;
+            const password = document.getElementById('login-password').value;
+            
+            try {
+                const response = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identifier, password })
+                });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    handleLoginSuccess(result);
+                } else {
+                    alert(result.error);
+                }
+            } catch (error) {
+                console.error('Login request failed:', error);
+                alert('Failed to connect to the server.');
+            }
+        });
+        
+        document.getElementById('signup-form').addEventListener('submit', async (e) => { 
+            e.preventDefault();
+            const fullName = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const phoneNumber = iti.getNumber();
+
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            if (!iti.isValidNumber()) {
+                alert('Please enter a valid phone number.');
+                return;
+            }
+            if (password.length < 8) {
+                alert('Password must be at least 8 characters long.');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        full_name: fullName,
+                        email: email,
+                        phone_number: phoneNumber,
+                        password: password
+                    })
+                });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert(result.message);
+                    switchView('login-view');
+                } else {
+                    alert(result.error);
+                }
+            } catch (error) {
+                console.error('Signup request failed:', error);
+                alert('Failed to connect to the server.');
+            }
+        });
+        
+        // --- Google Sign-In Logic ---
+        
+        // This function is called by Google's script after a user signs in
+        async function handleGoogleLogin(response) {
+            try {
+                const res = await fetch('http://localhost:3000/auth/google', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: response.credential })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    handleLoginSuccess(data);
+                } else {
+                    alert(data.error || 'Google Sign-In failed.');
+                }
+            } catch (error) {
+                console.error('Google Sign-In Error:', error);
+                alert('An error occurred during Google Sign-In.');
+            }
+        }
+        
+        // This function runs when the page has finished loading
+        window.onload = function () {
+            // IMPORTANT: Replace this with your actual Google Client ID from the Google Cloud Console
+            const GOOGLE_CLIENT_ID = '683066786753-4kgkvq9q0hbpcffemrf2eivo5ktbicd1.apps.googleusercontent.com';
+
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleGoogleLogin
+            });
+
+            // Render the Google Sign-In button in the Login View
+            google.accounts.id.renderButton(
+                document.getElementById('google-signin-btn-container-login'),
+                { theme: "outline", size: "large", type: "standard", text: "signin_with", shape: "pill" } 
+            );
+
+            // Render the Google Sign-Up button in the Signup View
+            google.accounts.id.renderButton(
+                document.getElementById('google-signin-btn-container-signup'),
+                { theme: "outline", size: "large", type: "standard", text: "signup_with", shape: "pill" } 
+            );
+        };
+
+        // Initial language load
+        applyTranslations();
+    </script>
+</body>
+</html>
